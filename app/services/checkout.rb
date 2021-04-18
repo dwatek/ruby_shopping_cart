@@ -1,43 +1,50 @@
 # frozen_string_literal: true
 
 class Checkout
-  def initialize(promotional_rules = nil)
+  def initialize(promotional_rules = [])
     @promotional_rules = promotional_rules
-    @basket = []
+    @products = []
   end
 
   def scan(code)
-    basket << Product.find_by!(code: code)
+    products << Product.find_by!(code: code)
   end
 
   def total
-    (basket_total - (discount || 0)).round(2)
+    (products_total_price - discounts).to_f.round(2)
   end
 
   private
 
-  attr_reader :promotional_rules, :basket
+  attr_reader :promotional_rules, :products
 
-  def basket_total
-    basket.map(&:price).sum
+  def products_total_price
+    products.map(&:price).sum
   end
 
-  def discount
-    (items_discounts || 0) + (basket_discounts || 0)
+  def discounts
+    products_discounts + checkout_discount
   end
 
-  def basket_discounts
-    # When spending over 60, the customer gets 10% off their purchase
-    ((basket_total - items_discounts) * 10 / 100).to_f if basket_total.to_f > 60
+  def products_discounts
+    product_promotions.map { |promotion| ProductDiscountCalculator.new(promotion, products).call }.sum
   end
 
-  def items_discounts
-    # When purchasing 2 or more of the Red Scarf, its price is reduced to 8.50
-    items = basket.select { |item| item.code == '001' }
-    if items.size >= 2
-      items.size * 0.75
-    else
-      0
-    end
+  def checkout_discount
+    checkout_promotions.map do |promotion|
+      CheckoutDiscountCalculator.new(promotion, products_price_with_products_discount).call
+    end.sum
+  end
+
+  def product_promotions
+    promotional_rules.where(promotion_type: 'product')
+  end
+
+  def checkout_promotions
+    promotional_rules.where(promotion_type: 'checkout')
+  end
+
+  def products_price_with_products_discount
+    products_total_price - products_discounts
   end
 end

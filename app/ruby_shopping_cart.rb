@@ -7,7 +7,11 @@ require 'erb'
 require 'pg'
 
 require 'app/services/checkout'
+require 'app/services/checkout_discount_calculator'
+require 'app/services/product_discount_calculator'
+
 require 'app/models/product'
+require 'app/models/promotion'
 
 Dotenv.load
 

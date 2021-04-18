@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_18_130239) do
+ActiveRecord::Schema.define(version: 2021_04_18_165629) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,13 @@ ActiveRecord::Schema.define(version: 2021_04_18_130239) do
     t.string "name", null: false
     t.decimal "price", null: false
     t.index ["code"], name: "index_products_on_code", unique: true
+  end
+
+  create_table "promotions", force: :cascade do |t|
+    t.string "promotion_type", null: false
+    t.string "product_code"
+    t.bigint "condition", null: false
+    t.decimal "discount", null: false
   end
 
 end
