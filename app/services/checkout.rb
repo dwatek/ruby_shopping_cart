@@ -37,11 +37,11 @@ class Checkout
   end
 
   def product_promotions
-    promotional_rules.where(promotion_type: 'product')
+    promotional_rules.empty? ? promotional_rules : promotional_rules.where(promotion_type: 'product')
   end
 
   def checkout_promotions
-    promotional_rules.where(promotion_type: 'checkout')
+    promotional_rules.empty? ? promotional_rules : promotional_rules.where(promotion_type: 'checkout')
   end
 
   def products_price_with_products_discount
