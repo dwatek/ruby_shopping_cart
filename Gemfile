@@ -1,6 +1,8 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-# Specify your gem's dependencies in ruby_shopping_cart.gemspec
-gemspec
+source 'https://rubygems.org'
 
-gem "rake", "~> 12.0"
+ruby '2.7.2'
+
+gem 'rake', '~> 12.0'
+gem 'rubocop'
